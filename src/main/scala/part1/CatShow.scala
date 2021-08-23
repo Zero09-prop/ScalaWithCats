@@ -1,4 +1,4 @@
-package introduction
+package part1
 
 import cats._
 import cats.implicits._

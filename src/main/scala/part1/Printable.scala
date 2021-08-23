@@ -1,4 +1,4 @@
-package introduction
+package part1
 
 trait Printable[A] {
   def format(value: A): String
