@@ -23,7 +23,7 @@ object Printable {
 
 final case class Cat(name: String, age: Int, color: String)
 
-object Main extends App {
+object MainPrintable extends App {
   import PrintableInstances._
   import PrintableSyntax._
 
