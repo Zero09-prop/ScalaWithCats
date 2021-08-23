@@ -18,13 +18,12 @@ object AddingAllTheThings extends App {
   def add(items: List[Int]): Int = {
     items.fold(0)((x, y) => x |+| y)
   }
-  def superAdder(items: List[Option[Int]]): Option[Int] = items.fold(Monoid[Option[Int]].empty)(_ |+| _)
-  def superSuperAdder(items: List[Order]): Order = items.fold(Monoid[Order].empty)(_ |+| _)
+  def superAdder[A](items: List[A])(implicit monoid: Monoid[A]): A = items.fold(Monoid[A].empty)(_ |+| _)
 
   val or1 = Order(25.8, 3)
   val or2 = Order(78.3, 1)
   println(add(List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)))
   println(superAdder(List(Option(1), Option(3), Option(0))))
-  println(superSuperAdder(List(or1, or2)))
+  println(superAdder(List(or1, or2)))
 
 }
