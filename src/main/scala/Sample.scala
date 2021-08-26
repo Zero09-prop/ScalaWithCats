@@ -1,15 +1,32 @@
 import cats._
+import cats.data._
 import cats.implicits._
-final case class Cat(name: String, age: Int, color: String)
 
-object Sample extends App {
-  implicit val monoidCat: Monoid[Cat] = new Monoid[Cat]{
-    override def empty: Cat = Cat("",0,"")
+final case class User(username: String, password: String)
+object wrapper {
+  sealed trait MyError
+  case class Fatal(msg: String, er: Option[Throwable]) extends MyError
+  case class Warning(msg: String) extends MyError
 
-    override def combine(x: Cat, y: Cat): Cat = Cat(x.name + y.name,x.age + y.age,x.color + y.color)
+  case class ConfigurationApp(email: String, server: String)
+
+  implicit class MyErrorOps(msg: String) {
+    def fatal(er: Throwable): MyError = Fatal(msg, Option(er))
+    def warning: MyError = Warning(msg)
   }
-  val cat1 = Cat("semen",1,"red")
-  val cat2 = Cat("Garf",3,"orange")
-  val s: String = "123"
-  println(cat1 |+| cat2)
+}
+object Sample extends App {
+  import wrapper._
+  val a: MyError = "Error".fatal(new NullPointerException)
+  type Logged[A] = Writer[Vector[MyError], A]
+  val writer1 = Vector("a", "b", "c").tell.flatMap(_ => Vector("d", "e", "f").tell)
+  val writer2 = writer1.mapWritten(x => x.map(_.toUpperCase))
+  println(writer1.run)
+  println(writer2.run)
+  val wrt: Logged[ConfigurationApp] = {
+    ConfigurationApp("mail.ru", "localhost").writer(Vector("Error".fatal(new NullPointerException)))
+  }
+  val wrt2 = wrt.reset
+  println(wrt.run)
+  println(wrt2.run)
 }
